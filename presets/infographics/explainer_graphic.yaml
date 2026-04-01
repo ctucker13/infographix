@@ -1,0 +1,24 @@
+id: explainer_graphic
+display_name: Explainer Graphic
+summary: General-purpose storyboard mixing hero panel, steps, and CTA.
+recommended_aspect_ratios:
+- '4:5'
+- '1:1'
+layout_rules:
+- Hero visual up top, supporting panels below.
+- Provide CTA footer or summary card.
+- Keep spacing comfortable for social feeds.
+section_structure:
+- Hook
+- Steps (3-4)
+- CTA
+text_budget_guidance:
+- Hook < 80 characters
+- Each step uses headline + 1 sentence
+recommended_icon_density: medium
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Mix hero illustration with modular cards.
+  negative:
+  - Avoid dense table layouts.

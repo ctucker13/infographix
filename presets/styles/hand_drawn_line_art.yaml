@@ -1,0 +1,26 @@
+id: hand_drawn_line_art
+display_name: Hand-Drawn Line Art
+summary: Sketchbook aesthetic with pencil contours, crosshatching, and light wash
+  fills.
+rendering_rules:
+- Use variable-width ink strokes with subtle imperfections.
+- Keep shapes outlined, fill with light neutral washes.
+- Sprinkle marginal notes and arrows for annotation energy.
+text_rules:
+- Write labels in neat handwriting or monoline fonts.
+- Reserve bold typography for headers only.
+color_behavior:
+- Backgrounds stay off-white or light kraft textures.
+- Accent palette limited to three muted colors.
+recommended_use_cases:
+- Educational explainers
+- Whiteboard recaps
+- Process diagrams
+negative_rules:
+- Avoid glossy gradients or heavy shadows.
+- No 3D bevels or metallic finishes.
+prompt_fragments:
+  global:
+  - Simulate pen-and-ink notebook page with margins and doodles.
+  negative:
+  - No photoreal shading or neon saturation.

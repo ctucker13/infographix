@@ -1,0 +1,25 @@
+id: cyberpunk_neon
+display_name: Cyberpunk Neon
+summary: High-contrast neon glow, holographic overlays, and futuristic typography.
+rendering_rules:
+- Layer holographic grids and glitch trails.
+- Use reflective chrome surfaces and neon signage.
+- Add depth with parallax cityscapes.
+text_rules:
+- Techno sans-serif fonts with tracking.
+- Pair glowing captions with translucent data blocks.
+color_behavior:
+- Electric magenta, cyan, violet with black background.
+- Use rim lights and bloom for icons.
+recommended_use_cases:
+- Technology roadmaps
+- Cybersecurity narratives
+- Sci-fi educational pieces
+negative_rules:
+- Avoid warm earthy palettes or paper textures.
+- No childish doodles or rustic motifs.
+prompt_fragments:
+  global:
+  - Embed HUD-style widgets and neon connectors.
+  negative:
+  - No watercolor bleed or chalk textures.

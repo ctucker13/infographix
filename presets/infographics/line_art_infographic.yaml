@@ -1,0 +1,22 @@
+id: line_art_infographic
+display_name: Line Art Infographic
+summary: Minimal monoline illustrations with airy spacing.
+recommended_aspect_ratios:
+- '4:5'
+layout_rules:
+- Use thin continuous lines to outline sections.
+- Combine icons with concise captions.
+- Keep plenty of white space for readability.
+section_structure:
+- Intro statement
+- 4-5 micro panels
+- Closing insight
+text_budget_guidance:
+- Each panel text under 45 characters
+recommended_icon_density: high
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Align drawings to golden ratio grid.
+  negative:
+  - Avoid filled gradients or photo textures.

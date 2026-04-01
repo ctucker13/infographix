@@ -1,0 +1,26 @@
+id: comic_book
+display_name: Comic Book
+summary: Bold halftones, speech bubbles, and action frames inspired by silver-age
+  comics.
+rendering_rules:
+- Outline shapes with thick inks and dramatic shadow wedges.
+- Use halftone fills and speed lines for emphasis.
+- Break sections into comic panels with gutters.
+text_rules:
+- Deploy uppercase lettering and captions.
+- Use speech bubbles for callouts and SFX for highlights.
+color_behavior:
+- CMYK-inspired primaries with black keylines.
+- Drop explosive gradients for hero moments.
+recommended_use_cases:
+- Explainer adventures
+- Product hero stories
+- Timeline narratives
+negative_rules:
+- Avoid pastel watercolor softness.
+- No photoreal textures or gradients without halftones.
+prompt_fragments:
+  global:
+  - Add POW and ZAP style callouts near peak stats.
+  negative:
+  - No minimal muted palettes or corporate gradients.

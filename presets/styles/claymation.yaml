@@ -1,0 +1,25 @@
+id: claymation
+display_name: Claymation
+summary: Stop-motion clay texture with tactile imperfections and physical lighting.
+rendering_rules:
+- Sculpt elements from colored clay with thumbprints.
+- Use stage lighting and soft shadows on felt backdrops.
+- Include layered paper labels pinned into clay.
+text_rules:
+- Embed text on paper strips or stamped tiles.
+- Keep labels short to avoid warping.
+color_behavior:
+- Earthy palette with pops of primary colors.
+- Background gradient mimics studio cyclorama.
+recommended_use_cases:
+- Behind-the-scenes explainers
+- Craft or DIY storytelling
+- Friendly onboarding flows
+negative_rules:
+- Avoid glossy plastic sheen or CAD precision.
+- No flat drop shadows; keep physical depth.
+prompt_fragments:
+  global:
+  - Arrange clay props as timeline markers or nodes.
+  negative:
+  - No digital glitch effects or wireframes.

@@ -1,0 +1,25 @@
+id: cartoon_3d
+display_name: 3D Cartoon
+summary: Soft 3D forms with volumetric shading, big eyes, and toy-like lighting.
+rendering_rules:
+- Render rounded characters, floating panels, and inflated icons.
+- Use rim lighting and drop shadows for depth.
+- Keep compositions playful yet structured for data.
+text_rules:
+- Bold sans-serif headers with bubble callouts.
+- Ensure labels sit on floating tablets.
+color_behavior:
+- Gradient-rich palette with warm key light and cool fill light.
+- Background glow behind hero subject.
+recommended_use_cases:
+- Product explainers
+- Process breakdowns
+- Youth marketing decks
+negative_rules:
+- Avoid realistic skin textures or gritty materials.
+- No sharp wireframes or glitch motifs.
+prompt_fragments:
+  global:
+  - Introduce 3D mascots guiding the viewer through steps.
+  negative:
+  - No flat vector shading or hand-drawn wobble lines.

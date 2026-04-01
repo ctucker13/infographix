@@ -1,0 +1,22 @@
+id: concept_diagram
+display_name: Concept Diagram
+summary: Abstract shapes explain relationships between core concepts.
+recommended_aspect_ratios:
+- '3:2'
+layout_rules:
+- Use shapes like triangles, circles, venn overlays.
+- Annotate connectors to explain relationships.
+- Include legend for color coding.
+section_structure:
+- Concept intro
+- Diagram annotations
+- Key insight list
+text_budget_guidance:
+- Each annotation short (<=35 chars)
+recommended_icon_density: medium
+recommended_chart_density: medium
+prompt_fragments:
+  composition:
+  - Provide callouts pointing to shapes with short labels.
+  negative:
+  - Avoid text paragraphs that obscure the diagram.

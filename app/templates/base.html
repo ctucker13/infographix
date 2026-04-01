@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Infographix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260401">
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="/static/js/htmx_helpers.js?v=20260401" defer></script>
+</head>
+<body>
+  <div class="app-frame">
+    <aside class="global-sidebar">
+      <div class="global-brand">
+        <h1>Infographix</h1>
+        <span class="global-tagline">Gemini infographic studio</span>
+      </div>
+      <nav class="global-nav" aria-label="Primary navigation">
+        <div class="global-nav__group">
+          <a href="/"
+             class="{% if request.url.path == '/' %}active{% endif %}">
+            Infographix
+          </a>
+          <a href="/history"
+             class="{% if request.url.path.startswith('/history') %}active{% endif %}">
+            History
+          </a>
+          <a href="/"
+             class="global-cta"
+             title="Start a new request">
+            New request
+          </a>
+        </div>
+        <div class="global-nav__group secondary">
+          <span class="global-nav__label">Studios</span>
+          <a href="/chat"
+             class="{% if request.url.path.startswith('/chat') %}active{% endif %}">
+            Image Generation Chat
+          </a>
+        </div>
+      </nav>
+    </aside>
+    <main class="content-shell">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

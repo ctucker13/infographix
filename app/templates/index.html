@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% set aspect_config = [
+  {"value": "16:9", "label": "16:9 widescreen", "sizes": ["1920x1080", "2560x1440", "1280x720", "1024x576"]},
+  {"value": "4:5", "label": "4:5 vertical poster", "sizes": ["1536x1920", "1024x1280", "2048x2560"]},
+  {"value": "1:1", "label": "1:1 square", "sizes": ["1024x1024", "1536x1536", "2048x2048"]},
+  {"value": "3:2", "label": "3:2 landscape", "sizes": ["1800x1200", "2700x1800", "1200x800"]},
+  {"value": "2:1", "label": "2:1 marquee", "sizes": ["2048x1024", "2400x1200", "1280x640"]},
+  {"value": "9:16", "label": "9:16 story", "sizes": ["1080x1920", "1200x2133", "1024x1820"]}
+] %}
+{% set size_defaults = ["1024x1024", "1536x1536", "1920x1080", "1200x1600", "1080x1920"] %}
+{% set preset_defaults = namespace(items=[]) %}
+{% for preset in infographics %}
+  {% set default_ratio = preset.recommended_aspect_ratios[0] if preset.recommended_aspect_ratios else "" %}
+  {% set preset_defaults.items = preset_defaults.items + [{"id": preset.id, "default_aspect": default_ratio}] %}
+{% endfor %}
+{% set model_defaults = [
+  {"id": "models/gemini-2.5-flash-image", "size": "1024x1024"},
+  {"id": "models/gemini-3.1-flash-image-preview", "size": "2048x2048"}
+] %}
+{% block content %}
+<section class="panel page-hero">
+  <p class="page-hero__eyebrow">Infographix</p>
+  <div class="page-hero__body">
+    <div>
+      <h2>Plan, style, and render Gemini infographics</h2>
+      <p>Choose presets, tune layouts, and preview a structured spec before you render. Every setting maps directly into the planner and prompt composer for predictable outcomes.</p>
+    </div>
+    <div class="page-hero__meta">
+      <span>Planner + Prompt Composer</span>
+      <span>Gemini Image models</span>
+    </div>
+  </div>
+</section>
+<div class="layout-grid">
+  <section class="panel">
+    <h2>Create Infographic</h2>
+    <form id="infographix-form"
+          action="/generate"
+          method="post"
+          enctype="multipart/form-data"
+          class="form-grid"
+          data-test-prompt-root
+          data-meta-prompt-form
+          data-test-prompts='{{ test_prompts | tojson | safe }}'>
+    <div class="meta-prompt-panel" data-meta-prompt-root>
+      <div>
+        <h3>Paste Meta Prompt</h3>
+        <p>Copy the JSON from Image Generation Chat (Meta Prompt mode) and we'll fill these fields automatically.</p>
+      </div>
+      <textarea data-meta-prompt-input placeholder="Paste ```json { ... } ``` output from Meta Prompt mode here."></textarea>
+      <div class="meta-prompt-actions">
+        <button type="button" class="button-link ghost small" data-meta-prompt-clear>Clear</button>
+        <button type="button" class="button-link small" data-meta-prompt-apply>Apply Meta Prompt</button>
+      </div>
+      <p class="meta-prompt-status" data-meta-status></p>
+    </div>
+    <label>Topic <input type="text" name="topic" required></label>
+    <label>Audience
+      <select name="audience">
+        <option value="">Choose audience (optional)</option>
+        <option value="Big conference audience">Big conference audience</option>
+        <option value="Whole department tech &amp; non tech">Whole department tech &amp; non tech</option>
+        <option value="Tech team only">Tech team only</option>
+        <option value="Stakeholder show-and-tell">Stakeholder show-and-tell</option>
+        <option value="Non-tech colleagues/external">Non-tech colleagues/external</option>
+      </select>
+    </label>
+    <label>Desired Model
+      <select name="desired_model">
+        <option value="models/gemini-2.5-flash-image">Gemini 2.5 Flash Image (speed)</option>
+        <option value="models/gemini-3.1-flash-image-preview">Gemini 3.1 Flash Image Preview (fidelity)</option>
+      </select>
+    </label>
+    <div class="infotype-field">
+      <label>Infographic Type
+        <select name="infographic_type">
+          {% for preset in infographics %}
+            <option value="{{ preset.id }}">{{ preset.display_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="sample-toggle">
+        <input type="checkbox" data-test-prompt-toggle>
+        Use preset test prompt
+      </label>
+    </div>
+    <label>Visual Style
+      <select name="visual_style">
+        {% for preset in styles %}
+          <option value="{{ preset.id }}">{{ preset.display_name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Title <input type="text" name="title"></label>
+    <label>Subtitle <input type="text" name="subtitle"></label>
+    <label>Footer <input type="text" name="footer_text"></label>
+    <div class="dual-field"
+         data-aspect-controller
+         data-aspect-config='{{ aspect_config | tojson | safe }}'
+         data-size-defaults='{{ size_defaults | tojson | safe }}'
+         data-preset-defaults='{{ preset_defaults.items | tojson | safe }}'
+         data-model-defaults='{{ model_defaults | tojson | safe }}'>
+      <div class="dual-field__column">
+        <label>Aspect Ratio
+          <select data-aspect-select>
+            <option value="">Auto (preset)</option>
+            {% for option in aspect_config %}
+              <option value="{{ option.value }}" data-sizes="{{ option.sizes | join(' ') }}">{{ option.label }}</option>
+            {% endfor %}
+            <option value="custom">Custom ratio…</option>
+          </select>
+        </label>
+        <input type="text" data-aspect-custom placeholder="e.g. 5:4" style="display:none">
+      </div>
+      <div class="dual-field__column">
+        <label>Image Size
+          <select data-size-select>
+            <option value="">Auto (model default)</option>
+            {% for size in size_defaults %}
+              <option value="{{ size }}">{{ size }}</option>
+            {% endfor %}
+            <option value="custom">Custom size…</option>
+          </select>
+        </label>
+        <input type="text" data-size-custom placeholder="e.g. 2048x2560" style="display:none">
+      </div>
+      <input type="hidden" name="aspect_ratio" data-aspect-hidden value="">
+      <input type="hidden" name="image_size" data-size-hidden value="">
+    </div>
+    <label>Exact Text Required?
+      <select name="exact_text_required">
+        <option value="false" selected>No</option>
+        <option value="true">Yes</option>
+      </select>
+    </label>
+    <label>Text Preference
+      <select name="text_preference">
+        <option value="summarize" selected>Summarize when needed</option>
+        <option value="exact">Use exact strings</option>
+      </select>
+    </label>
+    <label>Rendering Mode
+      <select name="render_mode">
+        <option value="">Auto</option>
+        <option value="pure_image">Pure image</option>
+        <option value="hybrid_overlay">Hybrid overlay</option>
+      </select>
+    </label>
+    <div class="section-builder"
+         data-section-builder
+         data-templates='{{ section_templates | tojson | safe }}'>
+      <div class="section-builder__header">
+        <h3>Sections & Content</h3>
+        <p>Describe each section and its text blocks. Add or remove cards as needed.</p>
+      </div>
+      <div class="section-builder__presets">
+        <label>Quick Template
+          <select data-template-select>
+            <option value="">Manual entry</option>
+            {% for template in section_templates %}
+              <option value="{{ template["id"] }}">{{ template["display_name"] }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <div class="section-builder__preset-details">
+          <strong data-template-summary>Pick a template to auto-fill sections.</strong>
+          <span class="section-builder__preset-guidance" data-template-guidance></span>
+        </div>
+        <div class="section-builder__preset-action">
+          <button type="button" class="ghost" data-apply-template disabled>
+            Apply Template
+          </button>
+        </div>
+      </div>
+      <div class="section-builder__list" data-section-list></div>
+      <div class="section-builder__actions">
+        <button type="button" class="ghost" data-add-section>
+          + Add Section
+        </button>
+      </div>
+      <input type="hidden" name="sections_json" id="sections-json" value="[]">
+    </div>
+    <template id="section-template">
+      <article class="section-card">
+        <div class="section-card__header">
+          <h4>Section <span data-section-number></span></h4>
+          <div class="section-card__controls">
+            <button type="button" class="text-button" data-add-block>+ Text Block</button>
+            <button type="button" class="text-button danger" data-remove-section>&times;</button>
+          </div>
+        </div>
+        <label>Section Title
+          <input type="text" data-field="title" placeholder="e.g. Assess Site">
+        </label>
+        <label>Icon Hint (optional)
+          <input type="text" data-field="icon_hint" placeholder="clipboard, sun, gear">
+        </label>
+        <label>Chart Hint (optional)
+          <input type="text" data-field="chart_hint" placeholder="progress bar, donut chart">
+        </label>
+        <div class="text-block-list" data-block-list></div>
+      </article>
+    </template>
+    <template id="text-block-template">
+      <div class="text-block">
+        <div class="text-block__inputs">
+          <label>Label
+            <input type="text" data-field="label" placeholder="Headline">
+          </label>
+          <label>Body
+            <input type="text" data-field="body" placeholder="Supporting sentence">
+          </label>
+        </div>
+        <div class="text-block__flags">
+          <label class="checkbox">
+            <input type="checkbox" data-field="exact_text">
+            Exact text
+          </label>
+          <button type="button" class="text-button danger" data-remove-block>&times;</button>
+        </div>
+      </div>
+    </template>
+    <label>Reference Images <input type="file" name="reference_images" multiple></label>
+    <div class="actions">
+      <button type="button"
+              class="ghost"
+              hx-post="/preview"
+              hx-target="#spec-preview"
+              hx-include="#infographix-form"
+              hx-encoding="multipart/form-data">
+        Preview Spec
+      </button>
+      <button type="submit">Generate</button>
+    </div>
+    </form>
+  </section>
+  <section id="spec-preview" class="panel muted">
+    <p>Spec preview will appear here.</p>
+  </section>
+</div>
+{% endblock %}

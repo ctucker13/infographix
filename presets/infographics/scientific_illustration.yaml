@@ -1,0 +1,25 @@
+id: scientific_illustration
+display_name: Scientific Illustration
+summary: Technical yet artistic treatment suitable for lab data and anatomy style
+  breakdowns.
+recommended_aspect_ratios:
+- '3:2'
+- '5:4'
+layout_rules:
+- Combine cutaway diagrams with numbered annotations.
+- Include mini charts or gauges.
+- Use precise line weights and measurement ticks.
+section_structure:
+- Abstract
+- Diagram callouts (3-5)
+- Data summary
+text_budget_guidance:
+- Body text under 80 characters each block
+- Provide short measurement tags
+recommended_icon_density: medium
+recommended_chart_density: medium
+prompt_fragments:
+  composition:
+  - Add figure labels (Fig.1, Fig.2) and legend.
+  negative:
+  - Avoid cartoonish exaggeration or childish mascots.

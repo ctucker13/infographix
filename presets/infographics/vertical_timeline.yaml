@@ -1,0 +1,25 @@
+id: vertical_timeline
+display_name: Vertical Timeline
+summary: Milestone-based stacked layout moving top-to-bottom with connectors.
+recommended_aspect_ratios:
+- '9:16'
+- '4:5'
+layout_rules:
+- Anchor timeline spine in center with nodes alternating left/right.
+- Include large date badges for each checkpoint.
+- Maintain equal spacing between steps.
+section_structure:
+- Hero intro
+- Timeline nodes (4-6)
+- Summary footer
+text_budget_guidance:
+- Titles under 60 characters
+- Keep each node to 2 text blocks
+- Encourage icon label + micro copy
+recommended_icon_density: medium
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Use connecting lines and arrowheads between events.
+  negative:
+  - Avoid overcrowding with paragraph text per node.

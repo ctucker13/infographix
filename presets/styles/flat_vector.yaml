@@ -1,0 +1,25 @@
+id: flat_vector
+display_name: Flat Vector UI
+summary: Crisp flat-color panels with geometric icons and modern UI cues.
+rendering_rules:
+- Use clean vector shapes, subtle rounded corners, minimal gradients.
+- Align sections to a modular grid with generous spacing.
+- Highlight data with iconography and thin strokes.
+text_rules:
+- Employ bold condensed headers plus light body text.
+- All caps for stats, sentence case for descriptions.
+color_behavior:
+- Bright triad palette plus grayscale neutrals.
+- Accent gradients limited to two-stop blends.
+recommended_use_cases:
+- SaaS explainers
+- KPI dashboards
+- Product launch one-pagers
+negative_rules:
+- Avoid sketch textures or painterly noise.
+- No glossy 3D or emboss effects.
+prompt_fragments:
+  global:
+  - Align icons and text to an 8pt grid for clarity.
+  negative:
+  - No drop shadows heavier than 8px blur.

@@ -1,0 +1,64 @@
+id: process_three_step
+display_name: Three-Step Transformation
+summary: Kickoff, three sequential phases, and a wrap-up call-to-action.
+recommended_for:
+  - process_flow
+  - whiteboard_explainer
+  - concept_diagram
+guidance:
+  - Pair with wide aspect ratios and arrow cues between panels.
+  - Keep each label punchy (<= 32 chars) and body text <= 80 chars.
+default_aspect_ratio: "16:9"
+default_image_size: "1920x1080"
+sections:
+  - id: kickoff
+    title: Kickoff Snapshot
+    icon_hint: spotlight, hero icon
+    text_blocks:
+      - label: Big Promise
+        body: Name the user outcome in one short sentence.
+        exact_text: false
+      - label: Audience
+        body: Who benefits and why now.
+        exact_text: false
+  - id: phase-1
+    title: Phase 1
+    icon_hint: checklist, clipboard
+    text_blocks:
+      - label: Focus
+        body: Define the main objective or diagnostic.
+        exact_text: false
+      - label: Key Move
+        body: One actionable task or deliverable.
+        exact_text: false
+  - id: phase-2
+    title: Phase 2
+    icon_hint: tools, wrench, iteration arrows
+    text_blocks:
+      - label: Build
+        body: Describe the primary workstream or experiment.
+        exact_text: false
+      - label: Signal
+        body: What measurable proof shows progress.
+        exact_text: false
+  - id: phase-3
+    title: Phase 3
+    icon_hint: rocket, upward arrow
+    text_blocks:
+      - label: Launch
+        body: State the handoff or go-live action.
+        exact_text: false
+      - label: Safeguard
+        body: Mention a guardrail, QA step, or contingency.
+        exact_text: false
+  - id: finale
+    title: Wrap-Up
+    icon_hint: celebration badge
+    chart_hint: slim KPI strip
+    text_blocks:
+      - label: Result
+        body: Summarize the transformation in <12 words.
+        exact_text: false
+      - label: Next Step
+        body: Call to action or metric to watch.
+        exact_text: false

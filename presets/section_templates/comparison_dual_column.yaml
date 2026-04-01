@@ -1,0 +1,65 @@
+id: comparison_dual_column
+display_name: Dual Comparison Grid
+summary: Two-column layout with mirrored headers plus metric callouts.
+recommended_for:
+  - comparison_chart
+  - statistical_infographic
+  - educational_diagram
+guidance:
+  - Works best with square or 4:5 canvases; keep rows aligned.
+  - Use icons or mini charts to differentiate the columns.
+default_aspect_ratio: "4:5"
+default_image_size: "1536x1920"
+sections:
+  - id: intro
+    title: Comparison Overview
+    icon_hint: scales, balance icon
+    text_blocks:
+      - label: Context
+        body: Frame what is being compared and why the viewer should care.
+        exact_text: false
+  - id: column-a
+    title: Option A
+    icon_hint: badge, left column icon
+    chart_hint: sparkline, micro bar
+    text_blocks:
+      - label: Core Strength
+        body: Leading differentiator in one clause.
+        exact_text: false
+      - label: Ideal Use
+        body: Who/when this option excels.
+        exact_text: false
+      - label: Watch-out
+        body: Constraint, cost, or trade-off.
+        exact_text: false
+  - id: column-b
+    title: Option B
+    icon_hint: badge, right column icon
+    chart_hint: sparkline, micro bar
+    text_blocks:
+      - label: Core Strength
+        body: Leading differentiator for this option.
+        exact_text: false
+      - label: Ideal Use
+        body: Who/when this option excels.
+        exact_text: false
+      - label: Watch-out
+        body: Constraint, cost, or trade-off.
+        exact_text: false
+  - id: metrics
+    title: Metric Snapshot
+    chart_hint: stacked bars or radial chart
+    text_blocks:
+      - label: Key Metric
+        body: Provide a numeric comparison (e.g., 38% vs 62%).
+        exact_text: false
+      - label: Secondary Metric
+        body: Another quantitative insight or qualitative tie-breaker.
+        exact_text: false
+  - id: takeaway
+    title: Decision Trigger
+    icon_hint: lightbulb
+    text_blocks:
+      - label: Recommendation
+        body: When to choose A vs B in one sentence.
+        exact_text: false

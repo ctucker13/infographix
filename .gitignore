@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+.env
+.env.*
+
+# Dependency/lock artifacts created locally
+uv.lock
+.python-version
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test & coverage output
+.pytest_cache/
+.mypy_cache/
+coverage.xml
+.coverage
+
+# Local databases & storage
+infographix.db
+test_infographix.db
+storage/
+chat_uploads/
+
+# Logs / temp
+*.log
+tmp/

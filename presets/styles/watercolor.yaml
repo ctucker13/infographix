@@ -1,0 +1,25 @@
+id: watercolor
+display_name: Watercolor Wash
+summary: Painterly washes with organic edges, layered pigments, and airy typography.
+rendering_rules:
+- Blend semi-transparent color pools with visible paper grain.
+- Use soft brush outlines and painterly icons.
+- Allow pigment bleeds along panel boundaries.
+text_rules:
+- Pair serif titles with handwritten sublabels.
+- Keep body text dark charcoal for contrast.
+color_behavior:
+- Pastel gradients with two bold accent splashes.
+- White space preserved for breathability.
+recommended_use_cases:
+- Lifestyle storytelling
+- Sustainability reports
+- Children education content
+negative_rules:
+- Avoid hard-edged UI blocks or neon colors.
+- No plastic sheen or metallic glints.
+prompt_fragments:
+  global:
+  - Layer watercolor textures beneath each section header.
+  negative:
+  - No pixelation, no harsh comic halftones.

@@ -1,0 +1,24 @@
+id: comparison_chart
+display_name: Comparison Chart
+summary: Side-by-side comparison grid for features, tiers, or before/after views.
+recommended_aspect_ratios:
+- '4:5'
+- '3:2'
+layout_rules:
+- Split canvas into two or three columns.
+- Align rows for attributes with icons or ticks.
+- Include highlight ribbon for best option.
+section_structure:
+- Title block
+- Comparison grid
+- Key takeaway footer
+text_budget_guidance:
+- Attribute labels under 35 characters
+- Provide optional micro copy row
+recommended_icon_density: medium
+recommended_chart_density: medium
+prompt_fragments:
+  composition:
+  - Use checkmarks, crosses, or rating pills per row.
+  negative:
+  - No misaligned tables or inconsistent row spacing.

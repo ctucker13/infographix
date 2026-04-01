@@ -1,0 +1,24 @@
+id: process_flow
+display_name: Process Flow
+summary: Linear or circular step-by-step system for explaining workflows.
+recommended_aspect_ratios:
+- '16:9'
+- '1:1'
+layout_rules:
+- Use directional arrows and numbered badges.
+- Keep step cards uniform with icon + text.
+- Provide summary banner and key metric callout.
+section_structure:
+- Overview
+- Steps (3-6)
+- Outcomes
+text_budget_guidance:
+- Each step limited to headline + 2 bullets
+- Keep overview under 80 characters
+recommended_icon_density: high
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Introduce arrow-based connectors and status indicators.
+  negative:
+  - Avoid spaghetti routes; maintain left-to-right clarity.

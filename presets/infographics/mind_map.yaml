@@ -1,0 +1,23 @@
+id: mind_map
+display_name: Mind Map
+summary: Radial hub-and-spoke diagram for brainstorming and conceptual clusters.
+recommended_aspect_ratios:
+- '1:1'
+layout_rules:
+- Place central idea in core bubble.
+- Branch categories with curved connectors and icons.
+- Keep outer nodes evenly spaced.
+section_structure:
+- Central idea
+- Branches (4-8)
+- Key insight footer
+text_budget_guidance:
+- Node labels max 28 characters
+- Optional micro-description per branch
+recommended_icon_density: high
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Use radial connectors and color-coded clusters.
+  negative:
+  - Avoid grid-like tables or stacked timelines.

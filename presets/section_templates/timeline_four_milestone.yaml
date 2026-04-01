@@ -1,0 +1,64 @@
+id: timeline_four_milestone
+display_name: Four-Milestone Timeline
+summary: Vertical or horizontal journey with kickoff, three milestones, and momentum footer.
+recommended_for:
+  - vertical_timeline
+  - roadmap
+  - explainer_graphic
+guidance:
+  - Works with tall 9:16 posters or wide 2:1 canvases.
+  - Keep milestone text <= 70 chars; focus on verbs.
+default_aspect_ratio: "9:16"
+default_image_size: "1024x2048"
+sections:
+  - id: opener
+    title: Kickoff Moment
+    icon_hint: map pin
+    text_blocks:
+      - label: Date
+        body: Month + year or phase number.
+        exact_text: false
+      - label: Mission
+        body: One-line statement of intent.
+        exact_text: false
+  - id: milestone-1
+    title: Milestone 1
+    icon_hint: blueprint, checklist
+    text_blocks:
+      - label: Highlight
+        body: Biggest change introduced here.
+        exact_text: false
+      - label: Evidence
+        body: Metric or qualitative proof.
+        exact_text: false
+  - id: milestone-2
+    title: Milestone 2
+    icon_hint: progress cog
+    text_blocks:
+      - label: Highlight
+        body: What unlocks at this stage.
+        exact_text: false
+      - label: Risk
+        body: One risk or dependency to manage.
+        exact_text: false
+  - id: milestone-3
+    title: Milestone 3
+    icon_hint: shipping box, rocket prep
+    text_blocks:
+      - label: Highlight
+        body: The final capability or deliverable.
+        exact_text: false
+      - label: Owner
+        body: Who signs off or leads (role, not person).
+        exact_text: false
+  - id: horizon
+    title: Ongoing Momentum
+    icon_hint: infinity loop, upward graph
+    chart_hint: small slope chart
+    text_blocks:
+      - label: Long-Term KPI
+        body: Trend, growth %, or adoption target.
+        exact_text: false
+      - label: Next Review
+        body: When to re-evaluate the roadmap.
+        exact_text: false

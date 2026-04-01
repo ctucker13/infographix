@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel page-hero">
+  <p class="page-hero__eyebrow">Infographix</p>
+  <div class="page-hero__body">
+    <div>
+      <h2>Generation History</h2>
+      <p>Review every render, model choice, and rendering mode. Open a record to inspect the normalized spec, prompt, and stored outputs.</p>
+    </div>
+  </div>
+</section>
+<section class="panel history-panel">
+  <div class="history-table">
+  <table class="data-table">
+    <thead>
+      <tr><th>Created</th><th>Model</th><th>Mode</th><th>Warnings</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+      <tr>
+        <td>{{ record.created_at }}</td>
+        <td>{{ record.selected_model }}</td>
+        <td>{{ record.rendering_mode }}</td>
+        <td>{{ record.warnings | length }}</td>
+        <td><a href="/history/{{ record.id }}">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endblock %}

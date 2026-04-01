@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>{{ spec.title or spec.topic }}</h2>
+  <p><strong>Model:</strong> {{ spec.selected_model }} (recommended {{ spec.recommended_model }})</p>
+  <p><strong>Rendering Mode:</strong> {{ spec.rendering_mode.value }}</p>
+  {% if error_message %}
+    <div class="warnings error">
+      <h4>Render Error</h4>
+      <p>{{ error_message }}</p>
+    </div>
+  {% endif %}
+  {% if warnings %}
+    <div class="warnings">
+      <h4>Warnings</h4>
+      <ul>
+        {% for warning in warnings %}
+          <li>{{ warning }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  {% if image_path %}
+    <div class="image-viewer" data-zoom-viewer data-zoom-default="75">
+      <div class="image-viewer__toolbar">
+        <span>Zoom</span>
+        <div class="image-viewer__controls">
+          <button type="button" class="text-button" data-zoom-out aria-label="Zoom out">-</button>
+          <input type="range" min="40" max="200" step="5" value="75" data-zoom-slider aria-label="Zoom slider">
+          <button type="button" class="text-button" data-zoom-in aria-label="Zoom in">+</button>
+        </div>
+        <span class="image-viewer__zoom" data-zoom-label>75%</span>
+      </div>
+      <div class="image-viewer__frame" data-zoom-stage>
+        <img src="{{ image_path }}" alt="Generated infographic" data-zoom-target>
+      </div>
+    </div>
+  {% endif %}
+  <div class="detail-actions">
+    <a href="/" class="button-link">Back to builder</a>
+    <a href="/history" class="button-link ghost">View history</a>
+    {% if permalink %}
+      <a href="{{ permalink }}" class="button-link ghost">Permalink</a>
+    {% endif %}
+  </div>
+  {% if permalink %}
+    <p class="detail-note">Bookmark or share this permalink to revisit the generated infographic later.</p>
+  {% endif %}
+</section>
+<section class="panel">
+  <h3>Sections</h3>
+  {% for section in spec.sections %}
+    <article>
+      <h4>{{ section.title or section.id }}</h4>
+      {% for block in section.text_blocks %}
+        <p><strong>{{ block.label }}:</strong> {{ block.body }} {% if block.exact_text %}<em>(exact)</em>{% endif %}</p>
+      {% endfor %}
+    </article>
+  {% endfor %}
+</section>
+<section class="panel muted">
+  <h3>Prompt</h3>
+  <pre>{{ prompt }}</pre>
+</section>
+<section class="panel revision-thread">
+  <h3>Revision Chat</h3>
+  <div class="revision-feed">
+    {% if spec.revision_notes %}
+      <article class="chat-bubble user">
+        <header>You</header>
+        <p>{{ spec.revision_notes }}</p>
+      </article>
+    {% endif %}
+    <article class="chat-bubble assistant">
+      <header>Gemini</header>
+      <p>This is the current output. Use the form below to request a new revision.</p>
+      {% if image_path %}
+        <img src="{{ image_path }}" alt="Current infographic preview" loading="lazy">
+      {% endif %}
+    </article>
+    {% for child in children %}
+      {% if child.revision_notes %}
+        <article class="chat-bubble user">
+          <header>You · {{ child.created_at }}</header>
+          <p>{{ child.revision_notes }}</p>
+        </article>
+      {% endif %}
+      <article class="chat-bubble assistant">
+        <header>Gemini</header>
+        <p>Revision ready: <a href="/history/{{ child.id }}">Open revision {{ loop.index }}</a></p>
+        {% if child.image_url %}
+          <img src="{{ child.image_url }}" alt="Revision {{ loop.index }} preview" loading="lazy">
+        {% endif %}
+      </article>
+    {% else %}
+      <p class="chat-empty">No revisions yet. Start the conversation below.</p>
+    {% endfor %}
+  </div>
+</section>
+<section class="panel revision-form">
+  <h3>Request a Revision</h3>
+  <form method="post" action="/history/{{ generation_id }}/revise">
+    <label>Tell Gemini what to change
+      <textarea name="message" rows="4" required placeholder="e.g. Highlight section 2 in orange and add callouts for dataset sizes."></textarea>
+    </label>
+    <button type="submit">Generate Revision</button>
+  </form>
+</section>
+{% endblock %}

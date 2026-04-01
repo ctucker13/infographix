@@ -1,0 +1,26 @@
+id: pixel_art_16bit
+display_name: 16-bit Pixel Art
+summary: Retro pixel grid with strict 16-bit palette and chunky outlines.
+rendering_rules:
+- Use crisp pixel clusters with visible grid alignment.
+- Prevent anti-aliasing; rely on dithering for gradients.
+- Keep characters and icons within 32px multiples.
+text_rules:
+- Prefer pixel-art HUD typography with high contrast.
+- Titles should sit in bordered panels reminiscent of retro UI.
+color_behavior:
+- Limit palette to saturated primaries plus two accent pastels.
+- Background should mimic CRT glow or tiled patterns.
+recommended_use_cases:
+- Gaming timelines
+- Nostalgic explainers
+- Retro gadget specs
+negative_rules:
+- No smooth gradients or photo textures.
+- Avoid skeuomorphic shading or glossy highlights.
+prompt_fragments:
+  global:
+  - Frame infographic panels with chunky pixel borders.
+  - Include minimalist sprites for icons and arrows.
+  negative:
+  - No blur, no anti-alias, no realistic lighting.

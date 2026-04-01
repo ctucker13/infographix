@@ -1,0 +1,24 @@
+id: whiteboard_explainer
+display_name: Whiteboard Explainer
+summary: Clean whiteboard aesthetic with sketch markers, sticky notes, and arrows.
+recommended_aspect_ratios:
+- '16:9'
+- '4:3'
+layout_rules:
+- Use horizontal sections divided by marker strokes.
+- Include sticky-note callouts and doodled icons.
+- Pair text with quick diagrams.
+section_structure:
+- Title + hook
+- Key ideas (3-5)
+- Action checklist
+text_budget_guidance:
+- Each idea limited to 2 sentences
+- Checklist labels under 40 characters
+recommended_icon_density: medium
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Simulate dry-erase texture with slightly smudged strokes.
+  negative:
+  - Avoid glossy digital gradients or photo collages.

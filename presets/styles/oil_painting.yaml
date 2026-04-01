@@ -1,0 +1,25 @@
+id: oil_painting
+display_name: Oil Painting
+summary: Rich impasto brush strokes with museum lighting and dramatic colors.
+rendering_rules:
+- Apply thick oil textures and palette-knife blends.
+- Use chiaroscuro lighting to guide the eye.
+- Frame sections with gilded borders or canvas textures.
+text_rules:
+- Serif titles on parchment ribbons.
+- Body text etched or engraved with high contrast.
+color_behavior:
+- Jewel-toned primaries plus warm highlights.
+- Background gradient reminiscent of gallery walls.
+recommended_use_cases:
+- Historical storytelling
+- Scientific milestones
+- Luxury education content
+negative_rules:
+- Avoid modern UI icons or neon glows.
+- No pixel-perfect vector art.
+prompt_fragments:
+  global:
+  - Blend data elements into painterly scenes with numbered plaques.
+  negative:
+  - No comic halftones or flat shading.

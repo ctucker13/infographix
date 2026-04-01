@@ -1,0 +1,25 @@
+id: educational_diagram
+display_name: Educational Diagram
+summary: Multi-panel teaching canvas mixing labeled illustrations and short bursts
+  of text.
+recommended_aspect_ratios:
+- '3:2'
+- '5:4'
+layout_rules:
+- "Break into three tiers: intro, body panels, recap."
+- Use callouts and numbered captions for diagrams.
+- Keep background lightly textured like classroom chart.
+section_structure:
+- Overview
+- Concept panels (3-5)
+- Recap checklist
+text_budget_guidance:
+- Titles under 70 characters
+- Each panel allowing up to 3 short blocks
+recommended_icon_density: medium
+recommended_chart_density: medium
+prompt_fragments:
+  composition:
+  - Include arrows, braces, and annotation labels.
+  negative:
+  - Avoid dense paragraphs or giant tables.

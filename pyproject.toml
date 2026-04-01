@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "infographix"
+version = "0.1.0"
+description = "Modular FastAPI app for generating customizable Gemini-powered infographics."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "jinja2>=3.1.4",
+    "markdown-it-py>=3.0.0",
+    "python-multipart>=0.0.9",
+    "google-genai>=0.5.2",
+    "pillow>=10.3.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.1",
+    "aiofiles>=24.1.0",
+    "aiosqlite>=0.20.0",
+    "sqlalchemy>=2.0.29",
+    "alembic>=1.13.1",
+    "httpx>=0.27.0",
+    "python-slugify>=8.0.4",
+    "anyio>=4.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.1.1",
+    "pytest-asyncio>=0.23.6",
+    "pytest-cov>=5.0.0",
+    "mypy>=1.9.0",
+    "ruff>=0.3.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.1.1",
+    "pytest-asyncio>=0.23.6",
+    "pytest-cov>=5.0.0",
+    "mypy>=1.9.0",
+    "ruff>=0.3.5",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["app", "tests"]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "UP",
+    "N",
+    "B",
+]
+ignore = ["E203"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+strict_optional = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --maxfail=1"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

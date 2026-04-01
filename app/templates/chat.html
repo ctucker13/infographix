@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="canvas-shell">
+  <aside class="canvas-sidebar">
+    <div class="canvas-sidebar__header">
+      <div>
+        <h3>Saved Chats</h3>
+        <p>Newest on top, older explorations below.</p>
+      </div>
+      <form method="post" action="/chat/session">
+        <button type="submit" class="button-link small">New Chat</button>
+      </form>
+    </div>
+    <nav class="canvas-sidebar__list">
+      {% for session in session_cards %}
+        <div class="canvas-session-row {% if session.active %}active{% endif %}">
+          <a href="/chat?session_id={{ session.id }}"
+             class="canvas-session-link">
+            <span class="canvas-session__title">{{ session.label }}</span>
+            <span class="canvas-session__meta">{{ session.created_at }}</span>
+          </a>
+          <form method="post" action="/chat/{{ session.id }}/delete" class="canvas-session-delete">
+            <button type="submit" aria-label="Delete chat" class="icon-button tiny ghost">&times;</button>
+          </form>
+        </div>
+      {% else %}
+        <p class="canvas-sidebar__empty">No chats yet. Start one to see it appear here.</p>
+      {% endfor %}
+    </nav>
+  </aside>
+  <div class="canvas-main">
+    <section class="panel chat-feed">
+      <header class="chat-hero">
+        <div>
+          <p class="chat-hero__eyebrow">Image Generation Chat</p>
+          <h2>Image Generation Chat</h2>
+          <p>Describe what you need in plain language. Use <strong>Meta Prompt</strong> mode to reverse engineer Infographix-ready prompts or interrogate an uploaded visual.</p>
+        </div>
+      </header>
+
+      {% if error_message %}
+        <div class="warnings error">
+          <strong>Something went wrong</strong>
+          <p>{{ error_message }}</p>
+        </div>
+      {% endif %}
+
+      <div class="chat-model-control"
+           data-model-picker
+           data-text-models='{{ text_models | tojson }}'
+           data-image-models='{{ image_models | tojson }}'
+           data-default-model='{{ active_session.default_model if active_session else "" }}'>
+        <label>Response model
+          <select name="model_id" form="canvas-composer-form" data-model-select>
+            {% for group, models in (("Chat models", text_models), ("Image models", image_models)) %}
+              <optgroup label="{{ group }}">
+                {% for model in models %}
+                  <option value="{{ model.id }}"
+                          data-model-kind="{{ 'text' if group == 'Chat models' else 'image' }}"
+                          {% if active_session and active_session.default_model == model.id %}
+                            selected
+                          {% elif not active_session and loop.first %}
+                            selected
+                          {% endif %}>
+                    {{ model.label }}
+                  </option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+
+      <div class="chat-messages unified" id="chat-scroll-anchor">
+        {% if not messages %}
+          <div class="chat-empty-state">
+            <p>“Give Gemini the feeling you want, not the pixels.”</p>
+            <span>Try “Illustrate a keynote-ready roadmap with three stages”.</span>
+          </div>
+        {% endif %}
+        {% for message in messages %}
+          <article class="chat-message chat-message--{{ message.role }} {% if message.message_type == 'meta_prompt' %}chat-message--meta{% endif %}">
+            <div class="chat-message__bubble">
+              <header>
+                <span class="chat-message__role">{{ "You" if message.role == "user" else "Gemini" }}</span>
+                {% if message.message_type == "meta_prompt" %}
+                  <span class="badge badge-meta">Meta prompt</span>
+                {% endif %}
+                <span class="chat-message__meta">{{ message.created_at }}</span>
+              </header>
+              {% if message.message_type == "image" %}
+                <div class="image-card is-loading">
+                  {% if message.image_url %}
+                    <img src="{{ message.image_url }}" alt="Generated image {{ loop.index }}" data-image-card>
+                  {% endif %}
+                </div>
+                <div class="image-actions">
+                  {% if message.image_url %}
+                    <a href="{{ message.image_url }}" download class="text-button">Download</a>
+                  {% endif %}
+                  <button type="button"
+                          class="text-button"
+                          data-iterate
+                          data-message-id="{{ message.id }}">
+                    Iterate
+                  </button>
+                </div>
+                {% if message.prompt %}
+                  <details class="chat-message__prompt">
+                    <summary>Prompt</summary>
+                    <pre>{{ message.prompt }}</pre>
+                  </details>
+                {% endif %}
+              {% else %}
+                <div class="chat-message__content">
+                  {{ message.content | markdown | safe }}
+                </div>
+                {% if message.attachments %}
+                  <div class="chat-attachments">
+                    {% for file in message.attachments %}
+                      {% if file.url %}
+                        <a href="{{ file.url }}" class="attachment-pill" download>
+                      {% else %}
+                        <span class="attachment-pill">
+                      {% endif %}
+                          <span class="attachment-name">{{ file.name }}</span>
+                          <span class="attachment-meta">{{ file.meta }}</span>
+                      {% if file.url %}
+                        </a>
+                      {% else %}
+                        </span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="panel muted chat-composer" data-chat-composer>
+      <form id="canvas-composer-form"
+            method="post"
+            enctype="multipart/form-data"
+            action="/chat/{{ active_session.id if active_session else '' }}/send"
+            class="chat-composer__form">
+        <div class="composer-pill">
+          <div class="composer-headline">
+            <div class="composer-modes">
+              <button type="button" class="mode-chip active" data-mode-chip="auto">Auto</button>
+              <button type="button" class="mode-chip" data-mode-chip="text">Chat</button>
+              <button type="button" class="mode-chip" data-mode-chip="image">Imagine</button>
+              <button type="button" class="mode-chip" data-mode-chip="meta_prompt">Meta Prompt</button>
+            </div>
+            <div class="composer-status" data-mode-status>Let Gemini pick text or image</div>
+          </div>
+        <div class="composer-input">
+          <textarea name="content"
+                    placeholder="“Sketch a luminous timeline for our launch milestones…”"
+                    required></textarea>
+          <div class="composer-icons">
+            <button type="submit"
+                    class="icon-button accent"
+                    aria-label="Send prompt"
+                    title="Send or imagine response">
+              <svg viewBox="0 0 24 24"
+                   class="icon icon-glyph glyph-send"
+                   data-send-icon
+                   aria-hidden="true">
+                <g class="icon-plane">
+                  <path d="M4 4.5 20 12 4 19.5l2.4-6.4L13 12 6.4 10.9Z" />
+                </g>
+                <g class="icon-cloud" aria-hidden="true">
+                  <path class="cloud-outline"
+                        d="M7 17h9.8a3.7 3.7 0 0 0 0-7.4h-0.3A5 5 0 0 0 12 5a5 5 0 0 0-4.7 3.2A3.6 3.6 0 0 0 7 17Z" />
+                  <path class="cloud-base"
+                        d="M6 17c-1.7 0-3-1.3-3-3s1.3-3 3-3" />
+                </g>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+        <div class="composer-attachments" data-attachment-zone>
+          <label class="attachment-trigger">
+            <input type="file" name="attachments" multiple data-attachment-input>
+            <span>Add files</span>
+          </label>
+          <ul class="attachment-preview" data-attachment-list></ul>
+          <button type="button" class="text-button tiny" data-attachment-clear>Clear</button>
+        </div>
+        <div class="composer-meta">
+          <div class="composer-parent" data-parent-indicator>
+            <span>Iterating on previous image</span>
+            <button type="button" class="text-button" data-parent-clear>&times;</button>
+          </div>
+        </div>
+        <input type="hidden" name="response_mode" value="auto" data-mode-field>
+        <input type="hidden" name="parent_message_id" data-parent-field>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+id: childrens_book
+display_name: Children's Book
+summary: Friendly illustrated spreads with big characters, playful objects, and rounded
+  typography.
+rendering_rules:
+- Use soft characters with expressive faces guiding each section.
+- Add cut-paper textures and illustrated borders.
+- Keep narrative arrows and icons oversized for clarity.
+text_rules:
+- Mix chunky sans-serif headers with playful handwritten captions.
+- Keep sentences short and age-appropriate.
+color_behavior:
+- Pastel base with three bold primaries for contrast.
+- White or cream background for readability.
+recommended_use_cases:
+- STEM for kids
+- Safety explainers
+- Library programming
+negative_rules:
+- Avoid harsh neon or grungy effects.
+- No dense corporate patterning.
+prompt_fragments:
+  global:
+  - Include smiling mascots pointing to each infographic section.
+  negative:
+  - No dark horror lighting or cyberpunk motifs.

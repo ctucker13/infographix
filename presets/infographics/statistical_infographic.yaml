@@ -1,0 +1,24 @@
+id: statistical_infographic
+display_name: Statistical Infographic
+summary: Data-forward dashboard featuring charts, hero stats, and annotation callouts.
+recommended_aspect_ratios:
+- '16:9'
+- '3:2'
+layout_rules:
+- Reserve hero stat banner at top.
+- Mix two chart types (bar/line/pie) with annotation labels.
+- Keep grid aligned with vertical separators.
+section_structure:
+- Hero stat
+- Chart panels (2-3)
+- Insight bullets
+text_budget_guidance:
+- Stats limited to 12 characters each
+- Insights are 1-2 sentences
+recommended_icon_density: low
+recommended_chart_density: high
+prompt_fragments:
+  composition:
+  - Render crisp vector charts with consistent axes.
+  negative:
+  - Avoid decorative clutter that hides data.

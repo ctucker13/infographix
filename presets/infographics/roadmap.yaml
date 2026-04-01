@@ -1,0 +1,23 @@
+id: roadmap
+display_name: Product Roadmap
+summary: Multi-quarter planning lanes with milestones and status tags.
+recommended_aspect_ratios:
+- '16:9'
+layout_rules:
+- Use horizontal lanes per quarter or workstream.
+- Place milestone cards with color-coded status chips.
+- Include legend for status states.
+section_structure:
+- Vision header
+- Roadmap lanes (4-6 milestones)
+- Risks + next steps
+text_budget_guidance:
+- Milestone titles <= 40 characters
+- Notes limited to single sentence
+recommended_icon_density: medium
+recommended_chart_density: low
+prompt_fragments:
+  composition:
+  - Add progress arrows and dependency connectors.
+  negative:
+  - Avoid cramped rows; maintain clear columns.
