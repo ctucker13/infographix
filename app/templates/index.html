@@ -85,12 +85,22 @@
       </label>
     </div>
     <label>Visual Style
-      <select name="visual_style">
+      <select name="visual_style" data-allow-custom="true">
         {% for preset in styles %}
           <option value="{{ preset.id }}">{{ preset.display_name }}</option>
         {% endfor %}
+        <option value="__custom__">Custom (describe style)</option>
       </select>
     </label>
+    <div class="custom-style-field" data-style-custom hidden>
+      <label>Describe custom style
+        <textarea name="custom_visual_style"
+                  rows="3"
+                  data-style-custom-input
+                  placeholder="Paste or describe the exact visual style you want Gemini to follow."></textarea>
+      </label>
+      <p class="field-hint">We’ll insert this text directly into the prompt so you can try brand-new or experimental styles.</p>
+    </div>
     <label>Title <input type="text" name="title"></label>
     <label>Subtitle <input type="text" name="subtitle"></label>
     <label>Footer <input type="text" name="footer_text"></label>

@@ -7,13 +7,21 @@ from app.models.specs import InfographicSpec, RenderingMode, UserInput
 from app.services.model_capabilities import get_capability
 from app.services.text_budget import evaluate_text_budget
 
+CUSTOM_STYLE_VALUE = "__custom__"
+
 
 class InfographicPlanner:
     def __init__(self, presets: PresetRepository):
         self.presets = presets
+        if "flat_vector" in self.presets.styles:
+            self.default_style_id = "flat_vector"
+        else:
+            self.default_style_id = next(iter(self.presets.styles.keys()), None)
+        if not self.default_style_id:
+            raise RuntimeError("No style presets configured.")
 
     def plan(self, user_input: UserInput) -> InfographicSpec:
-        style = self.presets.get_style(user_input.visual_style)
+        style, custom_style_text = self._resolve_style(user_input.visual_style, user_input.custom_visual_style)
         infographic = self.presets.get_infographic(user_input.infographic_type)
         desired_model = user_input.desired_model or "models/gemini-2.5-flash-image"
         capability = get_capability(desired_model)
@@ -29,7 +37,8 @@ class InfographicPlanner:
             selected_model=desired_model,
             recommended_model=recommended_model,
             infographic_type=user_input.infographic_type,
-            visual_style=user_input.visual_style,
+            visual_style=style.id,
+            custom_visual_style=custom_style_text,
             title=user_input.title or slugify(user_input.topic, separator=" ").title(),
             subtitle=user_input.subtitle,
             sections=user_input.sections,
@@ -44,7 +53,7 @@ class InfographicPlanner:
             rendering_mode=self._pick_rendering_mode(user_input),
             revision_notes=user_input.revision_notes,
             metadata={
-                "style_summary": style.summary,
+                "style_summary": style.summary + (f" | Custom: {custom_style_text}" if custom_style_text else ""),
                 "infographic_summary": infographic.summary,
             },
         )
@@ -58,6 +67,21 @@ class InfographicPlanner:
             spec.warnings.append("Hybrid overlay recommended for text-heavy content.")
 
         return spec
+
+    def _resolve_style(self, style_id: str, custom_style_text: str | None):
+        custom_text = (custom_style_text or "").strip() or None
+        target_id = style_id
+        if style_id == CUSTOM_STYLE_VALUE:
+            target_id = self.default_style_id
+        try:
+            style = self.presets.get_style(target_id)
+        except KeyError:
+            fallback_text = custom_text or style_id
+            style = self.presets.get_style(self.default_style_id)
+            return style, fallback_text
+        if target_id != style_id and style_id not in self.presets.styles and not custom_text:
+            custom_text = style_id
+        return style, custom_text
 
     def _recommend_model(self, user_input: UserInput) -> str:
         if user_input.exact_text_required or any(

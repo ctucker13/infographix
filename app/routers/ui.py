@@ -35,6 +35,7 @@ CHAT_IMAGE_MODELS = [
     {"id": "models/gemini-2.5-flash-image", "label": "Gemini 2.5 Flash Image (fast)"},
     {"id": "models/gemini-3.1-flash-image-preview", "label": "Gemini 3.1 Flash Image Preview (fidelity)"},
 ]
+REVISION_IMAGE_MODELS = CHAT_IMAGE_MODELS
 CHAT_TEXT_MODEL_IDS = {model["id"] for model in CHAT_TEXT_MODELS}
 CHAT_IMAGE_MODEL_IDS = {model["id"] for model in CHAT_IMAGE_MODELS}
 DEFAULT_CHAT_TITLE = "Image Generation Chat"
@@ -43,6 +44,7 @@ CHAT_SUGGESTIONS = [
     "Summarize this data story in three beats with a hero visual",
     "Draft a technical explainer for our model architecture diagram",
 ]
+CUSTOM_STYLE_VALUE = "__custom__"
 
 
 def get_templates(request: Request):
@@ -102,6 +104,7 @@ async def _build_user_input(
     desired_model: str,
     infographic_type: str,
     visual_style: str,
+    custom_visual_style: str | None,
     sections_json: str,
     title: str | None,
     subtitle: str | None,
@@ -128,6 +131,12 @@ async def _build_user_input(
             mode = RenderingMode(render_mode)
         except ValueError:
             mode = None
+    custom_style_text = (custom_visual_style or "").strip() or None
+    if visual_style != CUSTOM_STYLE_VALUE:
+        custom_style_text = None
+    if visual_style == CUSTOM_STYLE_VALUE and not custom_style_text:
+        raise HTTPException(status_code=400, detail="Custom visual style description is required.")
+
     return UserInput(
         request_id=request_id,
         topic=topic,
@@ -135,6 +144,7 @@ async def _build_user_input(
         desired_model=desired_model,
         infographic_type=infographic_type,
         visual_style=visual_style,
+        custom_visual_style=custom_style_text,
         title=title,
         subtitle=subtitle,
         sections=sections,
@@ -310,6 +320,7 @@ async def preview_spec(
     infographic_type: str = Form(...),
     visual_style: str = Form(...),
     sections_json: str = Form("[]"),
+    custom_visual_style: str | None = Form(default=None),
     title: str | None = Form(default=None),
     subtitle: str | None = Form(default=None),
     footer_text: str | None = Form(default=None),
@@ -328,6 +339,7 @@ async def preview_spec(
         desired_model=desired_model,
         infographic_type=infographic_type,
         visual_style=visual_style,
+        custom_visual_style=custom_visual_style,
         sections_json=sections_json,
         title=title,
         subtitle=subtitle,
@@ -353,6 +365,7 @@ async def generate_ui(
     infographic_type: str = Form(...),
     visual_style: str = Form(...),
     sections_json: str = Form("[]"),
+    custom_visual_style: str | None = Form(default=None),
     title: str | None = Form(default=None),
     subtitle: str | None = Form(default=None),
     footer_text: str | None = Form(default=None),
@@ -375,6 +388,7 @@ async def generate_ui(
         desired_model=desired_model,
         infographic_type=infographic_type,
         visual_style=visual_style,
+        custom_visual_style=custom_visual_style,
         sections_json=sections_json,
         title=title,
         subtitle=subtitle,
@@ -460,6 +474,7 @@ async def history_revise(
     generation_id: str,
     request: Request,
     message: str = Form(...),
+    revision_model: str | None = Form(default=None),
     history: HistoryStore = Depends(get_history_store),
     planner: InfographicPlanner = Depends(get_planner),
     composer: PromptComposer = Depends(get_composer),
@@ -483,6 +498,8 @@ async def history_revise(
     user_input.revision_notes = combined_notes
     user_input.revision_of = generation_id
     user_input.request_id = str(uuid.uuid4())
+    if revision_model:
+        user_input.desired_model = revision_model
 
     spec = planner.plan(user_input)
     prompt = composer.compose(spec)
@@ -614,11 +631,20 @@ def _build_model_payload(messages: list) -> list[dict]:
                 parts.append(part)
         payload.append(
             {
-                "role": msg.role,
+                "role": _normalize_model_role(msg.role),
                 "parts": parts,
             }
         )
     return payload
+
+
+def _normalize_model_role(role: str | None) -> str:
+    if not role:
+        return "user"
+    lowered = role.lower()
+    if lowered in ("assistant", "model"):
+        return "model"
+    return "user"
 
 
 def _format_size(num: int) -> str:
@@ -636,6 +662,7 @@ def _format_size(num: int) -> str:
 async def _build_history_detail_context(request: Request, history: HistoryStore, record, error_message: str | None) -> dict:
     spec = InfographicSpec(**record.spec)
     children_records = await history.list_revision_chain(record.id)
+    ancestor_records = await history.list_ancestors(record.id)
     children = [
         {
             "id": child.id,
@@ -645,6 +672,27 @@ async def _build_history_detail_context(request: Request, history: HistoryStore,
         }
         for child in children_records
     ]
+    lineage_records = list(reversed(ancestor_records)) + [record] + children_records
+    timeline = []
+    for index, node in enumerate(lineage_records):
+        if not node:
+            continue
+        if index == 0:
+            label = "Original"
+        elif node.id == record.id:
+            label = "Currently viewing"
+        else:
+            label = f"Revision {index}"
+        timeline.append(
+            {
+                "id": node.id,
+                "created_at": node.created_at.strftime("%b %d, %H:%M"),
+                "notes": node.revision_notes or "",
+                "label": label,
+                "is_current": node.id == record.id,
+                "image_url": _public_path(node.image_path),
+            }
+        )
     return {
         "request": request,
         "spec": spec,
@@ -655,4 +703,6 @@ async def _build_history_detail_context(request: Request, history: HistoryStore,
         "permalink": f"/history/{record.id}",
         "children": children,
         "error_message": error_message,
+        "timeline": timeline,
+        "revision_models": REVISION_IMAGE_MODELS,
     }

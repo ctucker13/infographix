@@ -79,6 +79,7 @@
           </div>
         {% endif %}
         {% for message in messages %}
+          {% set content_dom_id = "message-content-" ~ message.id %}
           <article class="chat-message chat-message--{{ message.role }} {% if message.message_type == 'meta_prompt' %}chat-message--meta{% endif %}">
             <div class="chat-message__bubble">
               <header>
@@ -88,6 +89,14 @@
                 {% endif %}
                 <span class="chat-message__meta">{{ message.created_at }}</span>
               </header>
+              {% if message.message_type == "meta_prompt" %}
+                <button type="button"
+                        class="copy-chip"
+                        data-copy-button
+                        data-copy-json='{{ message.content | tojson | safe }}'>
+                  Copy JSON
+                </button>
+              {% endif %}
               {% if message.message_type == "image" %}
                 <div class="image-card is-loading">
                   {% if message.image_url %}
@@ -112,7 +121,8 @@
                   </details>
                 {% endif %}
               {% else %}
-                <div class="chat-message__content">
+                <div class="chat-message__content"
+                     id="{{ content_dom_id }}">
                   {{ message.content | markdown | safe }}
                 </div>
                 {% if message.attachments %}

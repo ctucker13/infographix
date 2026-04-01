@@ -1,0 +1,35 @@
+id: precision_process_cards
+display_name: Precision Process Cards
+summary: Corporate process-flow cards with crisp icons, navy headers, and light neutral canvas.
+rendering_rules:
+  - Lay out information inside rounded white cards aligned to a horizontal or modular grid.
+  - Separate stages using chevron connectors, thin dividers, or subtle gradient bars.
+  - Reserve heavier color fills for callouts (outcomes, metrics) to build hierarchy.
+text_rules:
+  - Pair bold uppercase headers with lighter sentence-case descriptions.
+  - Keep labels short (2–4 words) so they fit within compact cards.
+  - Ensure numerals or badges stay consistent in size across each step.
+color_behavior:
+  - "Palette anchors: #132945 navy, #2C6EB3 medium blue, #7FB8E8 sky gradient, #F5F5F7 light gray canvas."
+  - "Accent highlights: #F5B544 amber, #E4524C coral red, #0F9F4F signal green."
+  - "Outcomes banner color rule: swap the former blue fill for a royal purple gradient (#4C0B5F to #7D3C96) with white or #F4E9FB text for contrast."
+  - Background stays soft gray with faint inner-shadow to suggest depth.
+recommended_use_cases:
+  - QA / validation pipelines
+  - Corporate roadmaps
+  - Deployment / operations explainers
+  - Enterprise onboarding flows
+negative_rules:
+  - No dark drop shadows or glossy 3D lighting.
+  - Avoid pastel candy colors or neon glows.
+  - Do not mix sketch textures or hand-drawn lines with the clean vector system.
+prompt_fragments:
+  global:
+    - Render each stage card as white with soft #E2E6EE border, rounded 18px corners, and a subtle inner shadow.
+    - "Use outlined two-tone icons: navy stroke plus a single accent fill."
+    - Add a muted gradient strip (#7FB8E8 to #D0E4F9) for hero callout banners.
+    - For any "Outcomes" or spotlight stats panels, fill the block with the purple gradient (#4C0B5F to #7D3C96) and set copy + icons in white or #F4E9FB to match NatWest’s contrast ratio.
+  text:
+    - KEEP HEADERS UPPERCASE and set descriptions in sentence case with generous tracking.
+  negative:
+    - No serif script fonts, no drop shadows beyond 6px blur, and never place text directly on saturated backgrounds without white carding.

@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="detail-layout">
+  <div class="detail-main">
 <section class="panel">
   <h2>{{ spec.title or spec.topic }}</h2>
   <p><strong>Model:</strong> {{ spec.selected_model }} (recommended {{ spec.recommended_model }})</p>
   <p><strong>Rendering Mode:</strong> {{ spec.rendering_mode.value }}</p>
+  {% if spec.custom_visual_style %}
+    <p><strong>Custom Style:</strong> {{ spec.custom_visual_style }}</p>
+  {% endif %}
   {% if error_message %}
     <div class="warnings error">
       <h4>Render Error</h4>
@@ -100,10 +105,58 @@
 <section class="panel revision-form">
   <h3>Request a Revision</h3>
   <form method="post" action="/history/{{ generation_id }}/revise">
+    <label>Choose image model
+      <select name="revision_model">
+        <option value="">Use {{ spec.selected_model }}</option>
+        {% for model in revision_models %}
+          <option value="{{ model.id }}">{{ model.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
     <label>Tell Gemini what to change
       <textarea name="message" rows="4" required placeholder="e.g. Highlight section 2 in orange and add callouts for dataset sizes."></textarea>
     </label>
     <button type="submit">Generate Revision</button>
   </form>
 </section>
+  </div>
+  {% if timeline %}
+  <aside class="detail-sidebar">
+    <section class="panel revision-timeline">
+      <h3>Revision Timeline</h3>
+      <ol class="timeline">
+        {% for entry in timeline %}
+          <li class="timeline__item {% if entry.is_current %}is-current{% endif %}">
+            <div class="timeline__thumb">
+              {% if entry.image_url %}
+                <img src="{{ entry.image_url }}" alt="Revision {{ loop.index }} thumbnail" loading="lazy">
+              {% else %}
+                <span class="timeline__placeholder">No image</span>
+              {% endif %}
+            </div>
+            <div class="timeline__content">
+              <div class="timeline__head">
+                <div>
+                  <p class="timeline__label">{{ entry.label }}</p>
+                  <p class="timeline__meta">{{ entry.created_at }}</p>
+                </div>
+                <div class="timeline__actions">
+                  {% if entry.is_current %}
+                    <span class="badge badge-meta">Active</span>
+                  {% else %}
+                    <a href="/history/{{ entry.id }}" class="text-button">Open</a>
+                  {% endif %}
+                </div>
+              </div>
+              {% if entry.notes %}
+                <p class="timeline__notes">{{ entry.notes }}</p>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+  </aside>
+  {% endif %}
+</div>
 {% endblock %}

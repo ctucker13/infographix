@@ -8,6 +8,9 @@
     <dt>Image Size</dt><dd>{{ spec.image_size }}</dd>
     <dt>Text Budget</dt><dd>{{ spec.text_budget_status.value }}</dd>
   </dl>
+  {% if spec.custom_visual_style %}
+    <p class="field-hint"><strong>Custom Style:</strong> {{ spec.custom_visual_style }}</p>
+  {% endif %}
   <div class="sections">
     {% for section in spec.sections %}
       <article>

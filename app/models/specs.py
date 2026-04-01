@@ -81,6 +81,7 @@ class InfographicSpec(BaseModel):
     recommended_model: str
     infographic_type: str
     visual_style: str
+    custom_visual_style: str | None = None
     title: str | None = None
     subtitle: str | None = None
     sections: List[InfographicSection] = Field(default_factory=list)
@@ -110,6 +111,7 @@ class UserInput(BaseModel):
     desired_model: str | None = None
     infographic_type: str
     visual_style: str
+    custom_visual_style: str | None = None
     title: str | None = None
     subtitle: str | None = None
     sections: List[InfographicSection] = Field(default_factory=list)

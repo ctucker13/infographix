@@ -15,6 +15,10 @@ class RevisionService:
             "desired_model": overrides.get("desired_model", base_spec.selected_model),
             "infographic_type": overrides.get("infographic_type", base_spec.infographic_type),
             "visual_style": overrides.get("visual_style", base_spec.visual_style),
+            "custom_visual_style": overrides.get(
+                "custom_visual_style",
+                base_spec.custom_visual_style if base_spec.custom_visual_style else None,
+            ),
             "title": overrides.get("title", base_spec.title),
             "subtitle": overrides.get("subtitle", base_spec.subtitle),
             "sections": overrides.get("sections", base_spec.sections),

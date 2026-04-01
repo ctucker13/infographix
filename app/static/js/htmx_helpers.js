@@ -296,6 +296,39 @@ document.addEventListener('DOMContentLoaded', function () {
   const sizeSelect = document.querySelector('[data-size-select]');
   const sizeCustom = document.querySelector('[data-size-custom]');
   const sizeHidden = document.querySelector('[data-size-hidden]');
+  const styleSelect = form.querySelector('select[name="visual_style"]');
+  const styleCustomWrapper = form.querySelector('[data-style-custom]');
+  const styleCustomInput = form.querySelector('[data-style-custom-input]');
+  const CUSTOM_STYLE_VALUE = '__custom__';
+
+  function updateCustomStyleVisibility(clearValue) {
+    if (!styleSelect || !styleCustomWrapper || !styleCustomInput) {
+      return;
+    }
+    const active = styleSelect.value === CUSTOM_STYLE_VALUE;
+    styleCustomWrapper.hidden = !active;
+    styleCustomWrapper.classList.toggle('is-active', active);
+    styleCustomInput.required = active;
+    if (!active && clearValue) {
+      styleCustomInput.value = '';
+    }
+  }
+
+  function applyCustomStyleValue(text) {
+    if (!styleSelect || !styleCustomInput) {
+      return;
+    }
+    styleSelect.value = CUSTOM_STYLE_VALUE;
+    styleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    styleCustomInput.value = text == null ? '' : String(text);
+  }
+
+  if (styleSelect) {
+    styleSelect.addEventListener('change', function () {
+      updateCustomStyleVisibility(styleSelect.value !== CUSTOM_STYLE_VALUE);
+    });
+    updateCustomStyleVisibility(false);
+  }
 
   function stripFences(value) {
     if (!value) {
@@ -338,19 +371,76 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function setValue(name, value) {
+    if (typeof value === 'undefined') {
+      return;
+    }
     const field = form.querySelector('[name="' + name + '"]');
     if (!field) {
       return;
     }
-    if (field.tagName === 'SELECT') {
-      const normalized = value == null ? '' : String(value);
-      const exists = Array.from(field.options).some(function (opt) {
+    const fieldName = field.getAttribute('name') || '';
+    function slugify(value) {
+      return (value || '')
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+    }
+
+    function applySelectValue(selectEl, raw) {
+      const normalized = raw == null ? '' : String(raw).trim();
+      const options = Array.from(selectEl.options || []);
+      if (!normalized) {
+        selectEl.value = '';
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+      }
+      const exact = options.find(function (opt) {
         return opt.value === normalized;
       });
-      field.value = exists ? normalized : '';
-    } else {
-      field.value = value == null ? '' : value;
+      if (exact) {
+        selectEl.value = exact.value;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+      }
+      const lower = normalized.toLowerCase();
+      const textMatch = options.find(function (opt) {
+        return (opt.textContent || '').trim().toLowerCase() === lower;
+      });
+      if (textMatch) {
+        selectEl.value = textMatch.value;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+      }
+      const targetSlug = slugify(normalized);
+      if (targetSlug) {
+        const slugMatch = options.find(function (opt) {
+          const valueSlug = slugify(opt.value || '');
+          const textSlug = slugify((opt.textContent || '').trim());
+          return targetSlug === valueSlug || targetSlug === textSlug;
+        });
+        if (slugMatch) {
+          selectEl.value = slugMatch.value;
+          selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+          return true;
+        }
+      }
+      return false;
     }
+
+    if (field.tagName === 'SELECT') {
+      const matched = applySelectValue(field, value);
+      if (field === styleSelect && field.dataset.allowCustom === 'true') {
+        if (matched && field.value !== CUSTOM_STYLE_VALUE) {
+          updateCustomStyleVisibility(true);
+        } else if (!matched && value) {
+          applyCustomStyleValue(value);
+        }
+      }
+      return;
+    }
+    field.value = value == null ? '' : value;
     field.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
@@ -418,21 +508,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function applyMetaPayload(payload) {
-    setValue('topic', payload.topic || '');
-    setValue('audience', payload.audience || '');
-    setValue('desired_model', payload.desired_model || '');
-    setValue('infographic_type', payload.infographic_type || '');
-    setValue('visual_style', payload.visual_style || '');
-    setValue('title', payload.title || '');
-    setValue('subtitle', payload.subtitle || '');
-    setValue('footer_text', payload.footer_text || '');
-    setValue('text_preference', payload.text_preference || '');
-    setValue('render_mode', payload.render_mode || '');
+    setValue('topic', payload.topic);
+    setValue('audience', payload.audience);
+    setValue('infographic_type', payload.infographic_type);
+    setValue('visual_style', payload.visual_style);
+    if (Object.prototype.hasOwnProperty.call(payload, 'custom_visual_style')) {
+      setValue('custom_visual_style', payload.custom_visual_style);
+    }
+    setValue('title', payload.title);
+    setValue('subtitle', payload.subtitle);
+    setValue('footer_text', payload.footer_text);
+    setValue('text_preference', payload.text_preference);
+    setValue('render_mode', payload.render_mode);
     if (Object.prototype.hasOwnProperty.call(payload, 'exact_text_required')) {
       setValue('exact_text_required', String(Boolean(payload.exact_text_required)));
     }
-    applyAspect(payload.aspect_ratio);
-    applySize(payload.image_size);
+    if (typeof payload.aspect_ratio !== 'undefined') {
+      applyAspect(payload.aspect_ratio);
+    }
+    if (typeof payload.image_size !== 'undefined') {
+      applySize(payload.image_size);
+    }
     applySections(payload.sections || []);
     return Array.isArray(payload.reference_image_hints) ? payload.reference_image_hints : [];
   }
@@ -939,6 +1035,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const ratioCustom = aspectController ? aspectController.querySelector('[data-aspect-custom]') : null;
     const sizeSelect = aspectController ? aspectController.querySelector('[data-size-select]') : null;
     const sizeCustom = aspectController ? aspectController.querySelector('[data-size-custom]') : null;
+    const styleSelect = form.querySelector('select[name="visual_style"]');
+    const styleCustomInput = form.querySelector('[data-style-custom-input]');
+    const CUSTOM_STYLE_VALUE = '__custom__';
 
     function cloneSections(sections) {
       try {
@@ -973,6 +1072,21 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       select.value = hasOption ? normalized : '';
       select.dispatchEvent(new Event('change', { bubbles: true }));
+      if (name === 'visual_style') {
+        if (hasOption) {
+          if (styleCustomInput && select.value !== CUSTOM_STYLE_VALUE) {
+            styleCustomInput.value = '';
+          }
+        } else if (normalized) {
+          if (styleSelect) {
+            styleSelect.value = CUSTOM_STYLE_VALUE;
+            styleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+          if (styleCustomInput) {
+            styleCustomInput.value = normalized;
+          }
+        }
+      }
     }
 
     function applyAspect(value) {
@@ -1138,4 +1252,89 @@ document.addEventListener('DOMContentLoaded', function () {
       img.addEventListener('error', clearLoading);
     }
   });
+});
+
+function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise(function (resolve, reject) {
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function extractJsonSnippet(value) {
+  if (!value) {
+    return '';
+  }
+  const match = value.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  const trimmed = value.trim();
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    return trimmed;
+  }
+  return trimmed;
+}
+
+document.addEventListener('click', function (event) {
+  const button = event.target.closest('[data-copy-button]');
+  if (!button) {
+    return;
+  }
+  event.preventDefault();
+  const rawJson = button.dataset.copyJson;
+  const targetSelector = button.dataset.copyTarget;
+  let text = '';
+  if (rawJson) {
+    try {
+      const parsed = JSON.parse(rawJson);
+      text = extractJsonSnippet(parsed);
+    } catch (err) {
+      text = extractJsonSnippet(rawJson);
+    }
+  } else if (targetSelector) {
+    const node = document.querySelector(targetSelector);
+    if (node) {
+      text = node.innerText || node.textContent || '';
+    }
+  } else if (button.dataset.copyText) {
+    text = button.dataset.copyText;
+  }
+  if (!text) {
+    return;
+  }
+  const original = button.dataset.originalLabel || button.textContent.trim() || 'Copy';
+  button.dataset.originalLabel = original;
+  copyTextToClipboard(text)
+    .then(function () {
+      button.textContent = 'Copied';
+      button.classList.add('is-copied');
+      setTimeout(function () {
+        button.textContent = button.dataset.originalLabel;
+        button.classList.remove('is-copied');
+      }, 1600);
+    })
+    .catch(function () {
+      button.textContent = 'Failed';
+      button.classList.add('is-copied');
+      setTimeout(function () {
+        button.textContent = button.dataset.originalLabel;
+        button.classList.remove('is-copied');
+      }, 1600);
+    });
 });

@@ -64,3 +64,18 @@ class HistoryStore:
         )
         result = await self.session.execute(stmt)
         return list(result.scalars())
+
+    async def list_ancestors(self, generation_id: str) -> List[GenerationRecord]:
+        ancestors: list[GenerationRecord] = []
+        visited: set[str] = set()
+        current = await self.get_generation(generation_id)
+        while current and current.parent_id:
+            if current.parent_id in visited:
+                break
+            parent = await self.get_generation(current.parent_id)
+            if not parent:
+                break
+            ancestors.append(parent)
+            visited.add(parent.id)
+            current = parent
+        return ancestors

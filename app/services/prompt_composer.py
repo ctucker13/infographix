@@ -18,6 +18,8 @@ class PromptComposer:
         fragments: list[str] = []
         fragments += prompt_fragments.build_global_fragments(spec)
         fragments += prompt_fragments.build_style_fragments(style)
+        if spec.custom_visual_style:
+            fragments.append(f"Visual style guidance: {spec.custom_visual_style}")
         fragments += prompt_fragments.build_infographic_fragments(infographic)
         fragments += prompt_fragments.build_section_fragments(spec.sections)
         fragments += prompt_fragments.build_text_handling_fragments(spec)
