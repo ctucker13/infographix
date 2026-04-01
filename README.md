@@ -10,6 +10,7 @@ Infographix is a FastAPI-powered reference application that orchestrates Google 
 - **Hybrid overlay pipeline** uses Pillow to render deterministic text on top of Gemini imagery when exact typography is required.
 - **SQLite persistence** for raw requests, normalized specs, prompts, assets, warnings, and revision chains.
 - **HTMX + Jinja UI** for spec previews, generation, revision, and history browsing.
+- **Image Generation Chat + meta prompting** to iteratively design Infographix-ready JSON prompts, reverse engineer existing images, and paste structured output back into the builder.
 
 ## Project Structure
 ```
@@ -56,11 +57,26 @@ storage/                 # Generated outputs + reference uploads
 1. **Open the app** – Navigate to `http://localhost:8000/` after the dev server starts.
 2. **Enter basics** – Provide a topic and (optionally) the target audience in the first text fields.
 3. **Pick model + presets** – Choose the Gemini model, infographic type, and visual style from the dropdowns. These map directly to the preset YAMLs in `presets/`.
-4. **Add text & layout guidance** – Fill in optional title/subtitle/footer fields, aspect ratio, output size, and paste a JSON array of section definitions (use the placeholder example as a template). Toggle exact-text or rendering-mode preferences if needed.
-5. **Upload references (optional)** – Attach any reference images; they’ll be validated and stored for the run.
-6. **Preview the spec** – Click **Preview Spec** to POST to `/preview` via HTMX. The panel on the right shows the normalized `InfographicSpec`, text-budget warnings, and any planner recommendations before you spend tokens.
-7. **Generate** – When satisfied, hit **Generate**. The server will compose the prompt, call Gemini (or the placeholder renderer), persist the run, and redirect you to a detail page with the image, prompt, warnings, and structured spec.
-8. **Review history** – Use the top navigation’s “History” link to browse prior generations; each row links to the full detail view for revisions or downloads.
+4. **Leverage Meta Prompt paste** (optional) – A new “Paste Meta Prompt” panel lets you drop the JSON emitted by Image Generation Chat (Meta Prompt mode). Click **Apply Meta Prompt** and the form auto-fills topic, presets, aspect/size, text flags, and section cards. The status line will remind you to upload any reference assets noted in the JSON.
+5. **Add text & layout guidance** – Fine-tune title/subtitle/footer, aspect ratio, output size, and adjust section cards using the builder. Toggle exact-text or rendering-mode preferences if needed.
+6. **Upload references (optional)** – Attach any reference images; they’ll be validated and stored for the run.
+7. **Preview the spec** – Click **Preview Spec** to POST to `/preview` via HTMX. The panel on the right shows the normalized `InfographicSpec`, text-budget warnings, and any planner recommendations before you spend tokens.
+8. **Generate** – When satisfied, hit **Generate**. The server will compose the prompt, call Gemini (or the placeholder renderer), persist the run, and redirect you to a detail page with the image, prompt, warnings, and structured spec.
+9. **Review history** – Use the top navigation’s “History” link to browse prior generations; each row links to the full detail view for revisions or downloads.
+
+## Image Generation Chat & Meta Prompting
+The chat studio (nav: “Image Generation Chat”) now mirrors modern AI chat UX:
+
+1. **Modes** – Chips for Auto, Chat, Imagine, and **Meta Prompt** control the response type. Auto still auto-detects via heuristics + classifier; Meta Prompt explicitly gathers structured Infographix context.
+2. **Markdown rendering** – Gemini replies render as markdown with code fences, lists, and inline code for copy-ready prompts.
+3. **Meta Prompt workflow**:
+   - Switch to *Meta Prompt* mode.
+   - Describe the existing image or goal; upload optional references.
+   - Gemini asks follow-up questions until enough detail exists.
+   - Final replies include `META PROMPT READY` plus a ```json … ``` block containing Infographix fields (topic, presets, sections, etc.).
+   - Copy that JSON and paste it into the builder’s Meta Prompt panel to auto-fill the form.
+4. **Attachments** – Text uploads become inline snippets; binaries become base64 inline data, so Gemini can “see” the provided context.
+5. **Downloads & iterations** – Image responses include download links and iteration buttons. Meta Prompt replies show a badge and can be copied wholesale.
 
 ## Tooling
 - **Linting:** `uv run ruff check .`

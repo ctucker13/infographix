@@ -24,9 +24,11 @@ This document explains the “agents” that cooperate inside the Infographix ap
 2. **Gemini Text Client** (`app/services/text_client.py`) – handles multimodal chat replies. It now supports:
    - Streaming-compatible payloads (`parts`) so attachments become inline context.
    - `detect_response_mode`, which first uses heuristics then a lightweight call to `chat_router_model` (`models/gemini-2.0-flash`) to decide between text or image responses when users leave “Auto” selected.
+   - `generate_meta_prompt`, which powers the Meta Prompt mode. It interrogates the user until enough structured data exists, then returns `META PROMPT READY` plus a ```json``` block that maps directly to Infographix fields.
 3. **Gemini Image Client** – reused by chat when the resolved mode is `image`. Iterations reuse the parent prompt chain.
 4. **Chat Attachments Agent** (`app/services/chat_attachments.py`) – validates uploads (≤5 MB), stores them under `storage/chat_uploads`, and converts them to either inline text snippets (for textual files) or base64 inline data parts for multimodal chat.
-5. **UI State Agent** (`app/static/js/htmx_helpers.js`) – mode detection, auto model-switching, attachments preview, zoomed image viewing, section builder logic for Infographix, etc.
+5. **UI State Agent** (`app/static/js/htmx_helpers.js`) – mode detection (Auto / Chat / Imagine / Meta Prompt), auto model-switching, attachments preview, zoomed image viewing, section builder logic for Infographix, and the meta prompt paste helper on the builder form.
+6. **Meta Prompt Paste Helper** – part of the Infographix form; consumes the chat’s JSON output and auto-fills topic, presets, aspect/size, flags, and section cards, while reminding users to upload referenced assets.
 
 ---
 
@@ -40,7 +42,8 @@ This document explains the “agents” that cooperate inside the Infographix ap
 | **Text Overlay Renderer** | `app/services/text_overlay.py` | Pillow image + overlay instructions | PNG with deterministic text | Only used when planner sets `hybrid_overlay`. |
 | **History Store** | `app/services/history_store.py` | Generation metadata | Query interface for history UI/API | Links generation IDs to specs & prompts. |
 | **Chat Store** | `app/services/chat_store.py` | Session & message data | ORM accessors | Keeps per-session message chains with parent pointers for image iteration. |
-| **Gemini Text Client** | `app/services/text_client.py` | Chat payload | Reply text | Handles attachments via `parts`, includes auto-routing (`detect_response_mode`). |
+| **Gemini Text Client** | `app/services/text_client.py` | Chat payload | Reply text | Handles attachments via `parts`, includes auto-routing (`detect_response_mode`), and powers Meta Prompt JSON generation. |
+| **Meta Prompt Agent** | `app/services/text_client.py` (`generate_meta_prompt`) | Chat history in Meta Prompt mode | Markdown response with `META PROMPT READY` + JSON | Interrogates the user for missing info and emits copy/pasteable Infographix prompts. |
 | **Gemini Image Client (chat)** | Same as infographic renderer | Prompt + model | Image message saved to `storage/outputs` | Shared code path ensures consistent formatting. |
 | **Chat Router** | `text_client.detect_response_mode` + heuristics | Prompt text + attachments | Mode decision (`text` / `image`) | Uses heuristics first, then `chat_router_model` to classify ambiguous prompts. Sticky manual modes override. |
 | **Chat Attachments Agent** | `app/services/chat_attachments.py` | `UploadFile` array | Stored files + inline prompt parts | Produces metadata for UI and input for text client. |
@@ -120,7 +123,8 @@ Future models (e.g., `gemini-3-pro-image-preview`) can plug into `CHAT_IMAGE_MOD
 ## 9. Operational Notes
 - Env management with `uv`; dependencies defined in `pyproject.toml`.
 - `.env` holds `GOOGLE_API_KEY`. Without it, Gemini clients raise runtime errors.
-- Static assets (CSS/JS) mimic the Image Generation Chat visual language across Infographix, History, and Chat pages for continuity.
+- Static assets (CSS/JS) mimic the Image Generation Chat visual language across Infographix, History, and Chat pages for continuity, including markdown rendering, meta prompt badges, and the builder’s meta prompt paste panel.
+- Meta Prompt workflow turns chat conversations into Infographix-ready JSON that can be pasted directly into the builder, shortening the distance between exploratory prompting and structured infographic generation.
 - Tests (`tests/test_chat_utils.py`, planner/preset/prompt suites) ensure spec normalization, prompt modularity, model validation, and text budget logic remain stable.
 
 ---
