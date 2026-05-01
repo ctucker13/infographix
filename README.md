@@ -2,6 +2,8 @@
 
 Infographix is a FastAPI-powered reference application that orchestrates Google Gemini native image-generation models to create modular, revision-friendly infographics. Users can choose models, presets, styles, text handling options, and rendering workflows (pure image or hybrid text overlay) through both REST APIs and an HTMX-driven UI.
 
+<img width="960" height="540" alt="infographix-demo" src="https://github.com/user-attachments/assets/6cf7505a-50c9-4b3b-a34a-f29ed044b107" />
+
 ## Key Features
 - **Model-aware planning** with low-latency (`models/gemini-2.5-flash-image`) and premium (`models/gemini-3.1-flash-image-preview`) modes plus easy extension to future variants.
 - **Structured planner** converts raw user input into `InfographicSpec` objects with text budgets, rendering mode recommendations, and warnings.
